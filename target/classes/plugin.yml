@@ -1,0 +1,11 @@
+name: ShopHistory
+version: 1.0.0
+main: gg.morphie.shophistory.ShopHistory
+author: Morphie
+api-version: 1.19
+depend: [QuickShop]
+commands:
+  shophistory:
+    description: Main command for the ShopHistory plugin!
+    usage: /<command>
+    aliases: [shistory, sh]

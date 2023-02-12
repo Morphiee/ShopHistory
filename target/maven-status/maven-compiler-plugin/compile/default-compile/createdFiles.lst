@@ -1,0 +1,6 @@
+gg\morphie\shophistory\ShopHistory.class
+gg\morphie\shophistory\commands\SubCommand_Menu.class
+gg\morphie\shophistory\util\getQuickShop.class
+gg\morphie\shophistory\commands\CommandManager.class
+gg\morphie\shophistory\util\AddColor.class
+gg\morphie\shophistory\files\Messages.class
