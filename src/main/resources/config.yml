@@ -8,6 +8,21 @@
 #============================================================================================================================|
 #
 # Author's Discord: Morphie#1738
-# This plugin is dependent on
+# This plugin is dependent on Quickshop (Remake)
+# https://www.spigotmc.org/resources/quickshop-reremake-1-19-ready-multi-currency.62575/
 #
 #============================================================================================================================|
+
+Menu:
+  FillerItem:
+    Material: "PAPER"
+    CustomModelID: 10040
+  EmptyStockItem:
+    Material: "BARRIER"
+    CustomModelID: 1
+  NextPage:
+    Material: "ARROW"
+    CustomModelID: 1
+  PrevPage:
+    Material: "ARROW"
+    CustomModelID: 1

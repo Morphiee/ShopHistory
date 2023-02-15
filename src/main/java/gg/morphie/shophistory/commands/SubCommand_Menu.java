@@ -1,8 +1,8 @@
 package gg.morphie.shophistory.commands;
 
 import gg.morphie.shophistory.ShopHistory;
-import gg.morphie.shophistory.util.getQuickShop;
-import org.bukkit.Bukkit;
+import gg.morphie.shophistory.menus.HistoryMenu;
+import gg.morphie.shophistory.util.GetQuickShop;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.maxgamer.quickshop.api.command.CommandHandler;
@@ -25,6 +25,6 @@ public class SubCommand_Menu implements CommandHandler<CommandSender> {
     private void sendHistory(CommandSender s, String commandLabel) {
         Player player = (Player)s;
         UUID uuid = player.getUniqueId();
-        new getQuickShop().returnShopData(uuid, 0);
+        new HistoryMenu(plugin).openGUI(player);
     }
 }

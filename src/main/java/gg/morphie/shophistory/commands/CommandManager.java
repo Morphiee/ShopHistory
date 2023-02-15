@@ -1,7 +1,7 @@
 package gg.morphie.shophistory.commands;
 
 import gg.morphie.shophistory.ShopHistory;
-import gg.morphie.shophistory.util.getQuickShop;
+import gg.morphie.shophistory.util.GetQuickShop;
 import org.maxgamer.quickshop.api.command.CommandContainer;
 
 public class CommandManager {
@@ -21,6 +21,14 @@ public class CommandManager {
                 .description("Opens a menu displaying information on all of your shops.")
                 .build();
 
-        new getQuickShop().getQuickShopAPI().getCommandManager().registerCmd(this.rootContainer);
+        new GetQuickShop().getQuickShopAPI().getCommandManager().registerCmd(this.rootContainer);
+
+        this.rootContainer = CommandContainer.builder()
+                .prefix("reloadsh")
+                .permission("quickshop.reloadsh")
+                .executor(new SubCommand_ReloadSH(plugin))
+                .build();
+
+        new GetQuickShop().getQuickShopAPI().getCommandManager().registerCmd(this.rootContainer);
     }
 }
