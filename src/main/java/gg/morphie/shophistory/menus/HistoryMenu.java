@@ -7,7 +7,8 @@ import de.themoep.inventorygui.StaticGuiElement;
 import gg.morphie.shophistory.ShopHistory;
 import gg.morphie.shophistory.util.AddColor;
 import gg.morphie.shophistory.util.GetQuickShop;
-import net.md_5.bungee.api.ChatColor;
+import gg.morphie.shophistory.util.LocationUtils;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -15,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.maxgamer.quickshop.api.shop.Shop;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,12 +28,12 @@ public class HistoryMenu implements Listener {
     }
 
     String[] guiSetup = {
-            "         ",
             " ggggggg ",
             " ggggggg ",
             " ggggggg ",
             " ggggggg ",
-            "   ( )   "
+            " ggggggg ",
+            "  (   )  "
     };
 
     public void openGUI(Player p) {
@@ -83,7 +83,6 @@ public class HistoryMenu implements Listener {
                 itemname = new AddColor().fixCase(nameToChange);
             }
 
-            List<Character> slots = Arrays.asList('a', 'b', 'c', 'd', 'e', 'f', '$', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '!', '@', '%');
             int finalI = i;
 
                 group.addElement(new StaticGuiElement( '!',
@@ -91,23 +90,23 @@ public class HistoryMenu implements Listener {
                         1, // Display a number as the item count
                         click -> {
                             if (click.getType().isLeftClick()) {
-                                click.getWhoClicked().sendMessage(ChatColor.RED + "Left");
                                 return true; // returning true will cancel the click event and stop taking the item
                             } else if (click.getType().isRightClick()) {
-                                click.getWhoClicked().sendMessage(ChatColor.RED + "Right");
                                 gui.close();
-                                p.teleport(new GetQuickShop().getLocation(uuid, finalI));
+                                Location loc = new GetQuickShop().getLocation(uuid, finalI);
+                                p.teleport(LocationUtils.findSafeLocationAroundShop(loc));
+                                p.sendMessage(AddColor.addColor(plugin.getMessage("Prefix") + plugin.getMessage("TeleportMessage")));
                                 return true; // returning true will cancel the click event and stop taking the item
                             }
                             return true; // returning false will not cancel the initial click event to the gui
                         },
-                        AddColor.addColor("&3&l" + itemname),
+                        AddColor.addColor("&3&l" + itemname + new AddColor().fixCase(new GetQuickShop().getType(uuid, i))),
                         " ",
-                        AddColor.addColor("&7Type&8: &a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, i))),
-                        AddColor.addColor("&7Remaining Stock&8: &a" + new GetQuickShop().getStock(uuid, i) + "&8/&c1728"),
+                        AddColor.addColor("&7Price&8: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, i))),
+                        AddColor.addColor("&7Remaining Stock&8: &a" + new GetQuickShop().getStock(uuid, i) + new GetQuickShop().getSpace(uuid, i)),
                         " ",
                         AddColor.addColor("&7Right&8-&7Click to teleport to this shop."),
-                        AddColor.addColor("&7Left&8-&7Click to view shops logs")
+                        AddColor.addColor("&7Left&8-&7Click to view this shops logs")
                 ));
         }
         gui.addElement(group);

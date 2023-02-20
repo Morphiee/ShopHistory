@@ -67,5 +67,6 @@ public class Messages implements Listener {
         cfg.addDefault("ReloadMessage", "&aPlugin has been successfully reloaded!");
         cfg.addDefault("Prefix", "&8&l[&3ShopHistory&8&l] ");
         cfg.addDefault("ErrorPrefix", "&8&l[&3&l!&8&l] ");
+        cfg.addDefault("TeleportMessage", "&aYou have been successfully teleported to your shop.");
     }
 }

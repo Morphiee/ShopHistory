@@ -2,6 +2,7 @@ package gg.morphie.shophistory.commands;
 
 import gg.morphie.shophistory.ShopHistory;
 import gg.morphie.shophistory.menus.HistoryMenu;
+import gg.morphie.shophistory.util.AddColor;
 import gg.morphie.shophistory.util.GetQuickShop;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,12 +20,16 @@ public class SubCommand_Menu implements CommandHandler<CommandSender> {
     @Override
     public void onCommand(
             CommandSender sender, String commandLabel, String[] cmdArg) {
-        sendHistory(sender, commandLabel);
+            sendHistory(sender, commandLabel);
     }
 
     private void sendHistory(CommandSender s, String commandLabel) {
         Player player = (Player)s;
         UUID uuid = player.getUniqueId();
-        new HistoryMenu(plugin).openGUI(player);
+        if (!new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(uuid).isEmpty()) {
+            new HistoryMenu(plugin).openGUI(player);
+        } else {
+            player.sendMessage(AddColor.addColor(plugin.getMessage("ErrorPrefix") + "&7You do not have an player shops created!"));
+        }
     }
 }

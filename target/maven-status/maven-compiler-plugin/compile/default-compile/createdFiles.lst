@@ -5,4 +5,6 @@ gg\morphie\shophistory\commands\SubCommand_Menu.class
 gg\morphie\shophistory\commands\CommandManager.class
 gg\morphie\shophistory\util\AddColor.class
 gg\morphie\shophistory\files\Messages.class
+gg\morphie\shophistory\util\LocationUtils.class
+gg\morphie\shophistory\util\GetQuickShop$1.class
 gg\morphie\shophistory\commands\SubCommand_ReloadSH.class

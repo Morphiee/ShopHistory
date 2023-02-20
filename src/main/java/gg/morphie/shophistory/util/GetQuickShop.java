@@ -2,6 +2,9 @@ package gg.morphie.shophistory.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -21,12 +24,6 @@ public class GetQuickShop {
         return null;
     }
 
-    public String getOwner(UUID uuid, int index) {
-        Player player = Bukkit.getPlayer(uuid);
-        String owner = player.getDisplayName();
-        return owner;
-    }
-
     public ItemStack getItem(UUID uuid, int index) {
         Player player = Bukkit.getPlayer(uuid);
         return new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(uuid).get(index).getItem();
@@ -38,9 +35,15 @@ public class GetQuickShop {
         return stock;
     }
 
+    public String getSpace(UUID uuid, int index) {
+        Player player = Bukkit.getPlayer(uuid);
+        String stock = String.valueOf(new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(uuid).get(index).getRemainingSpace());
+        return stock;
+    }
+
     public String getPrice(UUID uuid, int index) {
         Player player = Bukkit.getPlayer(uuid);
-        String price = "$" + (String.valueOf(new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(uuid).get(index).getPrice()));
+        String price = this.getQuickShopAPI().getShopManager().getPlayerAllShops(uuid).get(index).getCurrency() + (new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(uuid).get(index).getPrice());
         return price;
     }
 
@@ -57,5 +60,9 @@ public class GetQuickShop {
 
     public org.maxgamer.quickshop.api.shop.Shop getShopByIndex(UUID uuid, int index) {
         return new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(uuid).get(index);
+    }
+
+    public Material getShopSignMaterial() {
+        return org.maxgamer.quickshop.util.Util.getSignMaterial();
     }
 }
