@@ -7,6 +7,7 @@ import de.themoep.inventorygui.StaticGuiElement;
 import gg.morphie.shophistory.ShopHistory;
 import gg.morphie.shophistory.util.AddColor;
 import gg.morphie.shophistory.util.GetQuickShop;
+import gg.morphie.shophistory.util.ItemStackUtils;
 import gg.morphie.shophistory.util.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,31 +34,11 @@ public class HistoryMenu implements Listener {
             " ggggggg ",
             " ggggggg ",
             " ggggggg ",
-            "  (   )  "
+            "  ( 1 )  "
     };
 
     public void openGUI(Player p) {
         InventoryGui gui = new InventoryGui(plugin, p, AddColor.addColor(plugin.getMessage("Menu.Title")), guiSetup);
-
-        ItemStack fillerItem = new ItemStack(Material.getMaterial(plugin.getConfig().getString("Menu.FillerItem.Material")), 1);
-        ItemMeta fillerMeta = fillerItem.getItemMeta();
-        fillerMeta.setCustomModelData((Integer) plugin.getConfig().get("Menu.FillerItem.CustomModelID"));
-        fillerItem.setItemMeta(fillerMeta);
-
-        ItemStack emptyStock = new ItemStack(Material.getMaterial(plugin.getConfig().getString("Menu.EmptyStockItem.Material")), 1);
-        ItemMeta emptyStockM = emptyStock.getItemMeta();
-        emptyStockM.setCustomModelData((Integer) plugin.getConfig().get("Menu.EmptyStockItem.CustomModelID"));
-        emptyStock.setItemMeta(emptyStockM);
-
-        ItemStack nextPage = new ItemStack(Material.getMaterial(plugin.getConfig().getString("Menu.NextPage.Material")), 1);
-        ItemMeta nextPagem = nextPage.getItemMeta();
-        nextPagem.setCustomModelData((Integer) plugin.getConfig().get("Menu.NextPage.CustomModelID"));
-        nextPage.setItemMeta(nextPagem);
-
-        ItemStack prevpage = new ItemStack(Material.getMaterial(plugin.getConfig().getString("Menu.PrevPage.Material")), 1);
-        ItemMeta prevpagem = prevpage.getItemMeta();
-        prevpagem.setCustomModelData((Integer) plugin.getConfig().get("Menu.PrevPage.CustomModelID"));
-        prevpage.setItemMeta(prevpagem);
 
         List<Shop> list = new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(p.getUniqueId());
         UUID uuid = p.getUniqueId();
@@ -69,7 +50,7 @@ public class HistoryMenu implements Listener {
             if (Integer.parseInt(new GetQuickShop().getStock(uuid, i)) > 0) {
                 material = new GetQuickShop().getItem(uuid, i);
             } else {
-                material = emptyStock;
+                material = new ItemStackUtils().createItem(plugin.getConfig().getString("Menu.EmptyStockItem.Material"), 1, (Integer) plugin.getConfig().getInt("Menu.EmptyStockItem.CustomModelID"), null, null, false);
             }
 
             String itemname;
@@ -111,13 +92,14 @@ public class HistoryMenu implements Listener {
         }
         gui.addElement(group);
 
-        gui.setFiller(fillerItem); // fill the empty slots with this
+        // Filler Item
+        gui.setFiller(new ItemStackUtils().createItem(plugin.getConfig().getString("Menu.FillerItem.Material"), 1, (Integer) plugin.getConfig().getInt("Menu.FillerItem.CustomModelID"), null, null, false)); // fill the empty slots with this
 
         // Previous page
-        gui.addElement(new GuiPageElement('(', prevpage, GuiPageElement.PageAction.PREVIOUS, "&8&l<< &aGo to Previous Page &7(%prevpage%)"));
+        gui.addElement(new GuiPageElement('(', new ItemStackUtils().createItem(plugin.getConfig().getString("Menu.PrevPage.Material"), 1, (Integer) plugin.getConfig().getInt("Menu.PrevPage.CustomModelID"), null, null, false), GuiPageElement.PageAction.PREVIOUS, "&8&l<< &aGo to Previous Page &7(%prevpage%)"));
 
         // Next page
-        gui.addElement(new GuiPageElement(')', nextPage, GuiPageElement.PageAction.NEXT, "&7(%nextpage%) &aGo to Next Page &8&l>>"));
+        gui.addElement(new GuiPageElement(')', new ItemStackUtils().createItem(plugin.getConfig().getString("Menu.NextPage.Material"), 1, (Integer) plugin.getConfig().getInt("Menu.NextPage.CustomModelID"), null, null, false), GuiPageElement.PageAction.NEXT, "&7(%nextpage%) &aGo to Next Page &8&l>>"));
 
         gui.show(p);
     }
