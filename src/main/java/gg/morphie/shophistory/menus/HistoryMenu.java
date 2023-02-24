@@ -45,10 +45,15 @@ public class HistoryMenu implements Listener {
 
         GuiElementGroup group = new GuiElementGroup('g');
 
+        ItemStack material;
+
         for (int i = 0; i < list.size(); i++) {
-            ItemStack material;
             if (Integer.parseInt(new GetQuickShop().getStock(uuid, i)) > 0) {
-                material = new GetQuickShop().getItem(uuid, i);
+                if (plugin.getConfig().getBoolean("Settings.UseShopItem")) {
+                    material = new GetQuickShop().getItem(uuid, i);
+                } else {
+                    material = new ItemStackUtils().createItem(plugin.getConfig().getString("Menu.ShopItem.Material"), 1, (Integer) plugin.getConfig().getInt("Menu.EmptyStockItem.CustomModelID"), null, null, false);
+                }
             } else {
                 material = new ItemStackUtils().createItem(plugin.getConfig().getString("Menu.EmptyStockItem.Material"), 1, (Integer) plugin.getConfig().getInt("Menu.EmptyStockItem.CustomModelID"), null, null, false);
             }
@@ -81,10 +86,10 @@ public class HistoryMenu implements Listener {
                             }
                             return true; // returning false will not cancel the initial click event to the gui
                         },
-                        AddColor.addColor("&3&l" + itemname + new AddColor().fixCase(new GetQuickShop().getType(uuid, i))),
+                        AddColor.addColor("&3&l" + itemname + "&8| &a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, i))),
                         " ",
                         AddColor.addColor("&7Price&8: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, i))),
-                        AddColor.addColor("&7Remaining Stock&8: &a" + new GetQuickShop().getStock(uuid, i) + new GetQuickShop().getSpace(uuid, i)),
+                        AddColor.addColor("&7Remaining Stock&8: &a" + new GetQuickShop().getStock(uuid, i) + "&7/&c" + new GetQuickShop().getSpace(uuid, i)),
                         " ",
                         AddColor.addColor("&7Right&8-&7Click to teleport to this shop."),
                         AddColor.addColor("&7Left&8-&7Click to view this shops logs")

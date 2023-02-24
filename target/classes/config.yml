@@ -13,12 +13,28 @@
 #
 #============================================================================================================================|
 
+Settings:
+  # If set to true the plugin will use the item the player is buying/selling as the shop icon in the menu
+  UseShopItem: true
+  # Should the plugin automatically delete player data files within the ShopHistory/PlayerData files folder? (This system is in
+  # place to help trim files of players who may never rejoin the server.)
+  AutoDeletePlayerFiles:
+    Enabled: false
+    # Number of days a player has to be offline before attempting to remove their player file.
+    DaysTillDeletion: 30
+
+#============================================================================================================================|
+
 Menu:
-  FillerItem:
-    Material: "PAPER"
-    CustomModelID: 10040
+# ShopItem: This will only work if the "UseShopItem" setting above us set to 'true'
+  ShopItem:
+    Material: "CHEST"
+    CustomModelID: 1
   EmptyStockItem:
     Material: "BARRIER"
+    CustomModelID: 1
+  FillerItem:
+    Material: "GRAY_STAINED_GLASS_PANE"
     CustomModelID: 1
   NextPage:
     Material: "ARROW"
@@ -26,3 +42,5 @@ Menu:
   PrevPage:
     Material: "ARROW"
     CustomModelID: 1
+
+#============================================================================================================================|

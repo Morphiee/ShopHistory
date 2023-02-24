@@ -1,21 +1,24 @@
 package gg.morphie.shophistory;
 
 import gg.morphie.shophistory.commands.CommandManager;
+import gg.morphie.shophistory.events.PlayerDataEvents;
 import gg.morphie.shophistory.files.Messages;
 import gg.morphie.shophistory.util.AddColor;
-import org.bukkit.Bukkit;
+import gg.morphie.shophistory.util.playerdata.PlayerDataCleaner;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 
 public class ShopHistory extends JavaPlugin implements Listener {
     public Messages messagescfg;
+    private PlayerDataEvents pe;
     public String Version;
-    Plugin quickshopPlugin = Bukkit.getPluginManager().getPlugin("QuickShop");
 
     public void onEnable() {
+        this.pe = new PlayerDataEvents(this);
+        getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(this.pe, this);
 
         Version = this.getDescription().getVersion();
         loadConfigManager();
@@ -24,6 +27,11 @@ public class ShopHistory extends JavaPlugin implements Listener {
         getServer().getConsoleSender().sendMessage(AddColor.addColor(this.getMessage("ServerStart.TitleVersion").replace("%VERSION%", this.Version)));
         getServer().getConsoleSender().sendMessage(AddColor.addColor(this.getMessage("ServerStart.Author")));
         createConfig();
+        if (this.getConfig().getBoolean("Settings.AutoDeletePlayerFiles.Enabled")) {
+            getServer().getConsoleSender().sendMessage(" ");
+            getServer().getConsoleSender().sendMessage(AddColor.addColor(this.getMessage("ServerStart.CleanerCheck")));
+            new PlayerDataCleaner(this).cleanPlayerData();
+        }
         getServer().getConsoleSender().sendMessage(" ");
         getServer().getConsoleSender().sendMessage(AddColor.addColor(this.getMessage("ServerStart.Footer")));
 

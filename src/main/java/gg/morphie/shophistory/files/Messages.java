@@ -62,6 +62,9 @@ public class Messages implements Listener {
         cfg.addDefault("ServerStart.Author", "&aAuthor&7: &2Morphie#1738 &7(Discord)");
         cfg.addDefault("ServerStart.Config", "&aConfig&7: &2Loaded");
         cfg.addDefault("ServerStart.GenConfig", "&aConfig&7: &2Generating");
+        cfg.addDefault("ServerStart.CleanerCheck", "&aPlayerData Cleaner&8: &2Checking for old files.");
+        cfg.addDefault("ServerStart.CleanerNoneCleared", "&aPlayerData Cleaner&8: &2No files cleared.");
+        cfg.addDefault("ServerStart.CleanerCleared", "&aPlayerData Cleaner&8: &2Successfully cleared %FILES_DELETED% files.");
         cfg.addDefault("ServerStart.Footer", "&7‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾");
         cfg.addDefault("Menu.Title", ":offset_-8::shop:");
         cfg.addDefault("ReloadMessage", "&aPlugin has been successfully reloaded!");

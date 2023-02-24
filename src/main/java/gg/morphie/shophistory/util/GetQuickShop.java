@@ -3,8 +3,6 @@ package gg.morphie.shophistory.util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.type.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -43,7 +41,7 @@ public class GetQuickShop {
 
     public String getPrice(UUID uuid, int index) {
         Player player = Bukkit.getPlayer(uuid);
-        String price = this.getQuickShopAPI().getShopManager().getPlayerAllShops(uuid).get(index).getCurrency() + (new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(uuid).get(index).getPrice());
+        String price = "$" + (new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(uuid).get(index).getPrice());
         return price;
     }
 
