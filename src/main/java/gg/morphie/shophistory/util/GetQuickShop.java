@@ -35,7 +35,7 @@ public class GetQuickShop {
 
     public String getSpace(UUID uuid, int index) {
         Player player = Bukkit.getPlayer(uuid);
-        String stock = String.valueOf(new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(uuid).get(index).getRemainingSpace());
+        String stock = String.valueOf(new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(uuid).get(index).getRemainingSpace() + new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(uuid).get(index).getRemainingStock());
         return stock;
     }
 
