@@ -3,6 +3,8 @@ gg\morphie\shophistory\menus\HistoryMenu.class
 gg\morphie\shophistory\commands\CommandManager.class
 gg\morphie\shophistory\util\ItemStackUtils.class
 gg\morphie\shophistory\util\LocationUtils.class
+gg\morphie\shophistory\util\ShopsFilterManager.class
+gg\morphie\shophistory\util\playerdata\PlayerDataManager.class
 gg\morphie\shophistory\util\playerdata\PlayerDataCleaner.class
 gg\morphie\shophistory\events\PlayerDataEvents.class
 gg\morphie\shophistory\ShopHistory.class

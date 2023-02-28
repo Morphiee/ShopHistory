@@ -63,4 +63,5 @@ public class GetQuickShop {
     public Material getShopSignMaterial() {
         return org.maxgamer.quickshop.util.Util.getSignMaterial();
     }
+
 }
