@@ -2,6 +2,7 @@ package gg.morphie.shophistory;
 
 import gg.morphie.shophistory.commands.CommandManager;
 import gg.morphie.shophistory.events.PlayerDataEvents;
+import gg.morphie.shophistory.events.QuickShopLogger;
 import gg.morphie.shophistory.files.Messages;
 import gg.morphie.shophistory.util.AddColor;
 import gg.morphie.shophistory.util.playerdata.PlayerDataCleaner;
@@ -13,12 +14,15 @@ import java.io.File;
 public class ShopHistory extends JavaPlugin implements Listener {
     public Messages messagescfg;
     private PlayerDataEvents pe;
+    private QuickShopLogger ql;
     public String Version;
 
     public void onEnable() {
         this.pe = new PlayerDataEvents(this);
+        this.ql = new QuickShopLogger(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(this.pe, this);
+        getServer().getPluginManager().registerEvents(this.ql, this);
 
         Version = this.getDescription().getVersion();
         loadConfigManager();

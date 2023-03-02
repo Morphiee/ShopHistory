@@ -5,7 +5,6 @@ import gg.morphie.shophistory.ShopHistory;
 import gg.morphie.shophistory.util.*;
 import gg.morphie.shophistory.util.playerdata.PlayerDataManager;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -111,6 +110,8 @@ public class HistoryMenu implements Listener {
                 group.addElement(new DynamicGuiElement('g', (viewer) -> new StaticGuiElement('g', new ItemStackUtils().createItem(finalMaterial.getType().name(), 1, modelData, null, null, false),
                     click -> {
                         if (click.getType().isLeftClick()) {
+                            List<String> shopLogs = new PlayerDataManager(plugin).getStringList(uuid, new GetQuickShop().getShop(uuid, finalI3));
+                            p.sendMessage(AddColor.addColor("&8- &7" + shopLogs.get(0) + "&7, " + shopLogs.get(1) + "&7, " + shopLogs.get(2) + "&7, " + shopLogs.get(3)));
                             return true; // returning true will cancel the click event and stop taking the item
                         } else if (click.getType().isRightClick()) {
                             gui.close();
@@ -161,6 +162,8 @@ public class HistoryMenu implements Listener {
                     group.addElement(new DynamicGuiElement('g', (viewer) -> new StaticGuiElement('g', new ItemStackUtils().createItem(finalMaterial.getType().name(), 1, modelData, null, null, false),
                         click -> {
                             if (click.getType().isLeftClick()) {
+                                List<String> shopLogs = new PlayerDataManager(plugin).getStringList(uuid, new GetQuickShop().getShop(uuid, finalI1));
+                                p.sendMessage(AddColor.addColor("&8- &7" + shopLogs.get(0) + "&7, " + shopLogs.get(1) + "&7, " + shopLogs.get(2) + "&7, " + shopLogs.get(3)));
                                 return true; // returning true will cancel the click event and stop taking the item
                             } else if (click.getType().isRightClick()) {
                                 gui.close();
@@ -212,6 +215,8 @@ public class HistoryMenu implements Listener {
                     group.addElement(new DynamicGuiElement('g', (viewer) -> new StaticGuiElement('g', new ItemStackUtils().createItem(finalMaterial.getType().name(), 1, modelData, null, null, false),
                         click -> {
                             if (click.getType().isLeftClick()) {
+                                List<String> shopLogs = new PlayerDataManager(plugin).getStringList(uuid, new GetQuickShop().getShop(uuid, finalI2));
+                                p.sendMessage(AddColor.addColor("&8- &7" + shopLogs.get(0) + "&7, " + shopLogs.get(1) + "&7, " + shopLogs.get(2) + "&7, " + shopLogs.get(3)));
                                 return true; // returning true will cancel the click event and stop taking the item
                             } else if (click.getType().isRightClick()) {
                                 gui.close();
@@ -257,6 +262,8 @@ public class HistoryMenu implements Listener {
                     group.addElement(new DynamicGuiElement('g', (viewer) -> new StaticGuiElement('g', new ItemStackUtils().createItem(finalMaterial.getType().name(), 1, finalMaterial.getItemMeta().getCustomModelData(), null, null, false),
                             click -> {
                                 if (click.getType().isLeftClick()) {
+                                    List<String> shopLogs = new PlayerDataManager(plugin).getStringList(uuid, new GetQuickShop().getShop(uuid, finalI2));
+                                    p.sendMessage(AddColor.addColor("&8- &7" + shopLogs.get(0) + "&7, " + shopLogs.get(1) + "&7, " + shopLogs.get(2) + "&7, " + shopLogs.get(3)));
                                     return true; // returning true will cancel the click event and stop taking the item
                                 } else if (click.getType().isRightClick()) {
                                     gui.close();

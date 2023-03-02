@@ -1,4 +1,5 @@
 gg\morphie\shophistory\util\GetQuickShop.class
+gg\morphie\shophistory\events\QuickShopLogger.class
 gg\morphie\shophistory\menus\HistoryMenu.class
 gg\morphie\shophistory\commands\CommandManager.class
 gg\morphie\shophistory\util\ItemStackUtils.class

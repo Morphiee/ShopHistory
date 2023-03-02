@@ -56,6 +56,11 @@ public class GetQuickShop {
         return loc;
     }
 
+    public String getShop(UUID uuid, int index) {
+        Player player = Bukkit.getPlayer(uuid);
+        return new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(uuid).get(index).toString();
+    }
+
     public org.maxgamer.quickshop.api.shop.Shop getShopByIndex(UUID uuid, int index) {
         return new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(uuid).get(index);
     }
