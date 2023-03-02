@@ -51,31 +51,30 @@ public class HistoryMenu implements Listener {
         gui.addElement(new GuiPageElement(')', new ItemStackUtils().createItem(plugin.getConfig().getString("Menu.NextPage.Material"), 1, plugin.getConfig().getInt("Menu.NextPage.CustomModelID"), null, null, false), GuiPageElement.PageAction.NEXT, "&aGo to Next Page &8&l>>"));
 
         gui.addElement(new DynamicGuiElement('1', (viewer) -> new StaticGuiElement('d', new ItemStackUtils().createItem(plugin.getConfig().getString("Menu.FilterItem.Material"), 1, plugin.getConfig().getInt("Menu.FilterItem.CustomModelID"), null, null, false),
-                click -> {
-                    String playerCurrentFilter = new PlayerDataManager(plugin).getString(uuid, "CurrentFilter");
-                    if (playerCurrentFilter.equalsIgnoreCase(new ShopsFilterManager(plugin).getDefaultFilter())) {
-                        new PlayerDataManager(plugin).setString(uuid, "CurrentFilter", new ShopsFilterManager(plugin).getShopFilters().get(0));
-                        gui.close();
-                        this.openGUI(p);
-                        return true;
-                    } else if (new ShopsFilterManager(plugin).getShopFilters().indexOf(playerCurrentFilter) == new ShopsFilterManager(plugin).getShopFilters().size()-1) {
-                        new PlayerDataManager(plugin).setString(uuid, "CurrentFilter", new ShopsFilterManager(plugin).getDefaultFilter());
-                        gui.close();
-                        this.openGUI(p);
-                        return true;
-                    } else {
-                        int playerFilterIndex = new ShopsFilterManager(plugin).getShopFilters().indexOf(playerCurrentFilter);
-                        new PlayerDataManager(plugin).setString(uuid, "CurrentFilter", new ShopsFilterManager(plugin).getShopFilters().get(playerFilterIndex+1));
-                        gui.close();
-                        this.openGUI(p);
-                        return true;
-                    }
-                },
-                AddColor.addColor("&3&lMenu Filter &8(&a" + new ShopsFilterManager(plugin).getPlayerTag(p.getUniqueId()) + "&8)"),
-                " ",
-                AddColor.addColor("&7Current Filter Tag&8:"),
-                AddColor.addColor("&7" + new ShopsFilterManager(plugin).getPrevTag(p.getUniqueId()) + " &8-&a " + new ShopsFilterManager(plugin).getPlayerTag(p.getUniqueId()) + " &8-&7 " +  new ShopsFilterManager(plugin).getNextTag(p.getUniqueId())
-                ))));
+            click -> {
+                String playerCurrentFilter = new PlayerDataManager(plugin).getString(uuid, "CurrentFilter");
+                if (playerCurrentFilter.equalsIgnoreCase(new ShopsFilterManager(plugin).getDefaultFilter())) {
+                    new PlayerDataManager(plugin).setString(uuid, "CurrentFilter", new ShopsFilterManager(plugin).getShopFilters().get(0));
+                    this.openGUI(p);
+                    InventoryGui.clearHistory(p);
+                    return true;
+                } else if (new ShopsFilterManager(plugin).getShopFilters().indexOf(playerCurrentFilter) == new ShopsFilterManager(plugin).getShopFilters().size()-1) {
+                    new PlayerDataManager(plugin).setString(uuid, "CurrentFilter", new ShopsFilterManager(plugin).getDefaultFilter());
+                    this.openGUI(p);
+                    InventoryGui.clearHistory(p);
+                    return true;
+                } else {
+                    int playerFilterIndex = new ShopsFilterManager(plugin).getShopFilters().indexOf(playerCurrentFilter);
+                    new PlayerDataManager(plugin).setString(uuid, "CurrentFilter", new ShopsFilterManager(plugin).getShopFilters().get(playerFilterIndex+1));
+                    this.openGUI(p);
+                    InventoryGui.clearHistory(p);
+                    return true;
+                }
+            },
+            AddColor.addColor("&3&lMenu Filter &8(&a" + new ShopsFilterManager(plugin).getPlayerTag(p.getUniqueId()) + "&8)"),
+            " ",
+            AddColor.addColor("&7Current Filter Tag&8:"),
+            AddColor.addColor("&7" + new ShopsFilterManager(plugin).getPrevTag(p.getUniqueId()) + " &8-&a " + new ShopsFilterManager(plugin).getPlayerTag(p.getUniqueId()) + " &8-&7 " +  new ShopsFilterManager(plugin).getNextTag(p.getUniqueId())))));
 
         for (int i = 0; i < list.size(); i++) {
             String playerCurrentFilter = new PlayerDataManager(plugin).getString(uuid, "CurrentFilter");
@@ -101,45 +100,47 @@ public class HistoryMenu implements Listener {
                     itemname = new AddColor().fixCase(nameToChange);
                 }
 
-                int finalI = i;
-
-                group.addElement(new StaticGuiElement( '!',
-                        new ItemStack(material),
-                        1, // Display a number as the item count
-                        click -> {
-                            if (click.getType().isLeftClick()) {
-                                return true; // returning true will cancel the click event and stop taking the item
-                            } else if (click.getType().isRightClick()) {
-                                gui.close();
-                                Location loc = new GetQuickShop().getLocation(uuid, finalI);
-                                p.teleport(LocationUtils.findSafeLocationAroundShop(loc));
-                                p.sendMessage(AddColor.addColor(plugin.getMessage("Prefix") + plugin.getMessage("TeleportMessage")));
-                                return true; // returning true will cancel the click event and stop taking the item
-                            }
-                            return true; // returning false will not cancel the initial click event to the gui
-                        },
-                        AddColor.addColor("&3&l" + itemname + " &8| &a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, i))),
-                        " ",
-                        AddColor.addColor("&7Price&8: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, i))),
-                        AddColor.addColor("&7Remaining Stock&8: &a" + new GetQuickShop().getStock(uuid, i) + "&7/&c" + new GetQuickShop().getSpace(uuid, i)),
-                        " ",
-                        AddColor.addColor("&7Right&8-&7Click to teleport to this shop."),
-                        AddColor.addColor("&7Left&8-&7Click to view this shops logs")
-                ));
+                ItemStack finalMaterial = material;
+                int modelData;
+                if (finalMaterial.getItemMeta().hasCustomModelData()) {
+                    modelData = finalMaterial.getItemMeta().getCustomModelData();
+                } else {
+                    modelData = 1;
+                }
+                int finalI3 = i;
+                group.addElement(new DynamicGuiElement('g', (viewer) -> new StaticGuiElement('g', new ItemStackUtils().createItem(finalMaterial.getType().name(), 1, modelData, null, null, false),
+                    click -> {
+                        if (click.getType().isLeftClick()) {
+                            return true; // returning true will cancel the click event and stop taking the item
+                        } else if (click.getType().isRightClick()) {
+                            gui.close();
+                            Location loc = new GetQuickShop().getLocation(uuid, finalI3);
+                            p.teleport(LocationUtils.findSafeLocationAroundShop(loc));
+                            p.sendMessage(AddColor.addColor(plugin.getMessage("Prefix") + plugin.getMessage("TeleportMessage")));
+                            return true; // returning true will cancel the click event and stop taking the item
+                        }
+                        return true; // returning false will not cancel the initial click event to the gui
+                    },
+                    AddColor.addColor("&3&l" + itemname + " &8| &a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, finalI3))),
+                    " ",
+                    AddColor.addColor("&7Price&8: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, finalI3))),
+                    AddColor.addColor("&7Remaining Stock&8: &a" + new GetQuickShop().getStock(uuid, finalI3) + "&7/&c" + new GetQuickShop().getSpace(uuid, finalI3)),
+                    " ",
+                    AddColor.addColor("&7Right&8-&7Click to teleport to this shop."),
+                    AddColor.addColor("&7Left&8-&7Click to view this shops logs")
+                )));
             } else if (playerCurrentFilter.equals("Buying")) {
                 if (new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(p.getUniqueId()).get(i).getShopType().toString().equalsIgnoreCase("buying")) {
                     if (Integer.parseInt(new GetQuickShop().getStock(uuid, i)) > 0) {
                         if (plugin.getConfig().getBoolean("Settings.UseShopItem")) {
-                            material = new GetQuickShop().getItem(uuid, i);
+                            material = new ItemStackUtils().createItem(new GetQuickShop().getItem(uuid, i).getType().name(), 1, 1, null, null, false);
                         } else {
                             material = new ItemStackUtils().createItem(plugin.getConfig().getString("Menu.ShopItem.Material"), 1, plugin.getConfig().getInt("Menu.EmptyStockItem.CustomModelID"), null, null, false);
                         }
                     } else {
                         material = new ItemStackUtils().createItem(plugin.getConfig().getString("Menu.EmptyStockItem.Material"), 1, plugin.getConfig().getInt("Menu.EmptyStockItem.CustomModelID"), null, null, false);
                     }
-
                     String itemname;
-
                     if (new GetQuickShop().getItem(uuid, i).getItemMeta().hasDisplayName()) {
                         itemname = new GetQuickShop().getItem(uuid, i).getItemMeta().getDisplayName();
                     } else {
@@ -149,31 +150,35 @@ public class HistoryMenu implements Listener {
                         itemname = new AddColor().fixCase(nameToChange);
                     }
 
-                    int finalI = i;
-
-                    group.addElement(new StaticGuiElement( '!',
-                            new ItemStack(material),
-                            1, // Display a number as the item count
-                            click -> {
-                                if (click.getType().isLeftClick()) {
-                                    return true; // returning true will cancel the click event and stop taking the item
-                                } else if (click.getType().isRightClick()) {
-                                    gui.close();
-                                    Location loc = new GetQuickShop().getLocation(uuid, finalI);
-                                    p.teleport(LocationUtils.findSafeLocationAroundShop(loc));
-                                    p.sendMessage(AddColor.addColor(plugin.getMessage("Prefix") + plugin.getMessage("TeleportMessage")));
-                                    return true; // returning true will cancel the click event and stop taking the item
-                                }
-                                return true; // returning false will not cancel the initial click event to the gui
-                            },
-                            AddColor.addColor("&3&l" + itemname + " &8| &a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, i))),
-                            " ",
-                            AddColor.addColor("&7Price&8: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, i))),
-                            AddColor.addColor("&7Remaining Stock&8: &a" + new GetQuickShop().getStock(uuid, i) + "&7/&c" + new GetQuickShop().getSpace(uuid, i)),
-                            " ",
-                            AddColor.addColor("&7Right&8-&7Click to teleport to this shop."),
-                            AddColor.addColor("&7Left&8-&7Click to view this shops logs")
-                    ));
+                    ItemStack finalMaterial = material;
+                    int modelData;
+                    if (finalMaterial.getItemMeta().hasCustomModelData()) {
+                        modelData = finalMaterial.getItemMeta().getCustomModelData();
+                    } else {
+                        modelData = 1;
+                    }
+                    int finalI1 = i;
+                    group.addElement(new DynamicGuiElement('g', (viewer) -> new StaticGuiElement('g', new ItemStackUtils().createItem(finalMaterial.getType().name(), 1, modelData, null, null, false),
+                        click -> {
+                            if (click.getType().isLeftClick()) {
+                                return true; // returning true will cancel the click event and stop taking the item
+                            } else if (click.getType().isRightClick()) {
+                                gui.close();
+                                Location loc = new GetQuickShop().getLocation(uuid, finalI1);
+                                p.teleport(LocationUtils.findSafeLocationAroundShop(loc));
+                                p.sendMessage(AddColor.addColor(plugin.getMessage("Prefix") + plugin.getMessage("TeleportMessage")));
+                                return true; // returning true will cancel the click event and stop taking the item
+                            }
+                            return true; // returning false will not cancel the initial click event to the gui
+                        },
+                        AddColor.addColor("&3&l" + itemname + " &8| &a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, finalI1))),
+                        " ",
+                        AddColor.addColor("&7Price&8: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, finalI1))),
+                        AddColor.addColor("&7Remaining Stock&8: &a" + new GetQuickShop().getStock(uuid, finalI1) + "&7/&c" + new GetQuickShop().getSpace(uuid, finalI1)),
+                        " ",
+                        AddColor.addColor("&7Right&8-&7Click to teleport to this shop."),
+                        AddColor.addColor("&7Left&8-&7Click to view this shops logs")
+                    )));
                 }
             } else if (playerCurrentFilter.equals("Selling")) {
                 if (new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(p.getUniqueId()).get(i).getShopType().toString().equalsIgnoreCase("selling")) {
@@ -186,9 +191,7 @@ public class HistoryMenu implements Listener {
                     } else {
                         material = new ItemStackUtils().createItem(plugin.getConfig().getString("Menu.EmptyStockItem.Material"), 1, plugin.getConfig().getInt("Menu.EmptyStockItem.CustomModelID"), null, null, false);
                     }
-
                     String itemname;
-
                     if (new GetQuickShop().getItem(uuid, i).getItemMeta().hasDisplayName()) {
                         itemname = new GetQuickShop().getItem(uuid, i).getItemMeta().getDisplayName();
                     } else {
@@ -198,31 +201,80 @@ public class HistoryMenu implements Listener {
                         itemname = new AddColor().fixCase(nameToChange);
                     }
 
-                    int finalI = i;
+                    ItemStack finalMaterial = material;
+                    int modelData;
+                    if (finalMaterial.getItemMeta().hasCustomModelData()) {
+                        modelData = finalMaterial.getItemMeta().getCustomModelData();
+                    } else {
+                        modelData = 1;
+                    }
+                    int finalI2 = i;
+                    group.addElement(new DynamicGuiElement('g', (viewer) -> new StaticGuiElement('g', new ItemStackUtils().createItem(finalMaterial.getType().name(), 1, modelData, null, null, false),
+                        click -> {
+                            if (click.getType().isLeftClick()) {
+                                return true; // returning true will cancel the click event and stop taking the item
+                            } else if (click.getType().isRightClick()) {
+                                gui.close();
+                                Location loc = new GetQuickShop().getLocation(uuid, finalI2);
+                                p.teleport(LocationUtils.findSafeLocationAroundShop(loc));
+                                p.sendMessage(AddColor.addColor(plugin.getMessage("Prefix") + plugin.getMessage("TeleportMessage")));
+                                return true; // returning true will cancel the click event and stop taking the item
+                            }
+                            return true; // returning false will not cancel the initial click event to the gui
+                        },
+                        AddColor.addColor("&3&l" + itemname + " &8| &a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, finalI2))),
+                        " ",
+                        AddColor.addColor("&7Price&8: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, finalI2))),
+                        AddColor.addColor("&7Remaining Stock&8: &a" + new GetQuickShop().getStock(uuid, finalI2) + "&7/&c" + new GetQuickShop().getSpace(uuid, finalI2)),
+                        " ",
+                        AddColor.addColor("&7Right&8-&7Click to teleport to this shop."),
+                        AddColor.addColor("&7Left&8-&7Click to view this shops logs")
+                    )));
+                }
+            } else if (playerCurrentFilter.equals("Out Of Stock")) {
+                if (new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(p.getUniqueId()).get(i).getRemainingStock() == 0) {
+                    if (Integer.parseInt(new GetQuickShop().getStock(uuid, i)) > 0) {
+                        if (plugin.getConfig().getBoolean("Settings.UseShopItem")) {
+                            material = new GetQuickShop().getItem(uuid, i);
+                        } else {
+                            material = new ItemStackUtils().createItem(plugin.getConfig().getString("Menu.ShopItem.Material"), 1, plugin.getConfig().getInt("Menu.EmptyStockItem.CustomModelID"), null, null, false);
+                        }
+                    } else {
+                        material = new ItemStackUtils().createItem(plugin.getConfig().getString("Menu.EmptyStockItem.Material"), 1, plugin.getConfig().getInt("Menu.EmptyStockItem.CustomModelID"), null, null, false);
+                    }
+                    String itemname;
+                    if (new GetQuickShop().getItem(uuid, i).getItemMeta().hasDisplayName()) {
+                        itemname = new GetQuickShop().getItem(uuid, i).getItemMeta().getDisplayName();
+                    } else {
+                        String nameToChange = new GetQuickShop().getItem(uuid, i).getType().name()
+                                .replace("_", " ").toLowerCase();
 
-                    group.addElement(new StaticGuiElement( '!',
-                            new ItemStack(material),
-                            1, // Display a number as the item count
+                        itemname = new AddColor().fixCase(nameToChange);
+                    }
+
+                    ItemStack finalMaterial = material;
+                    int finalI2 = i;
+                    group.addElement(new DynamicGuiElement('g', (viewer) -> new StaticGuiElement('g', new ItemStackUtils().createItem(finalMaterial.getType().name(), 1, finalMaterial.getItemMeta().getCustomModelData(), null, null, false),
                             click -> {
                                 if (click.getType().isLeftClick()) {
                                     return true; // returning true will cancel the click event and stop taking the item
                                 } else if (click.getType().isRightClick()) {
                                     gui.close();
-                                    Location loc = new GetQuickShop().getLocation(uuid, finalI);
+                                    Location loc = new GetQuickShop().getLocation(uuid, finalI2);
                                     p.teleport(LocationUtils.findSafeLocationAroundShop(loc));
                                     p.sendMessage(AddColor.addColor(plugin.getMessage("Prefix") + plugin.getMessage("TeleportMessage")));
                                     return true; // returning true will cancel the click event and stop taking the item
                                 }
                                 return true; // returning false will not cancel the initial click event to the gui
                             },
-                            AddColor.addColor("&3&l" + itemname + " &8| &a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, i))),
+                            AddColor.addColor("&3&l" + itemname + " &8| &a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, finalI2))),
                             " ",
-                            AddColor.addColor("&7Price&8: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, i))),
-                            AddColor.addColor("&7Remaining Stock&8: &a" + new GetQuickShop().getStock(uuid, i) + "&7/&c" + new GetQuickShop().getSpace(uuid, i)),
+                            AddColor.addColor("&7Price&8: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, finalI2))),
+                            AddColor.addColor("&7Remaining Stock&8: &a" + new GetQuickShop().getStock(uuid, finalI2) + "&7/&c" + new GetQuickShop().getSpace(uuid, finalI2)),
                             " ",
                             AddColor.addColor("&7Right&8-&7Click to teleport to this shop."),
                             AddColor.addColor("&7Left&8-&7Click to view this shops logs")
-                    ));
+                    )));
                 }
             }
         }

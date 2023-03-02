@@ -16,7 +16,7 @@ public class ShopsFilterManager {
     }
 
     String DefaultFilter = "All";
-    List<String> ShopFilters = Arrays.asList("Buying", "Selling");
+    List<String> ShopFilters = Arrays.asList("Buying", "Selling", "Out Of Stock");
 
     public String getPlayerTag(UUID uuid) {
         return new PlayerDataManager(plugin).getString(uuid, "CurrentFilter");
