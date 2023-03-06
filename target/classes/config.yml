@@ -22,6 +22,7 @@ Settings:
     Enabled: false
     # Number of days a player has to be offline before attempting to remove their player file.
     DaysTillDeletion: 30
+  ShopLoggerNum: 20
 
 #============================================================================================================================|
 

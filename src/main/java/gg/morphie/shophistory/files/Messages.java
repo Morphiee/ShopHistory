@@ -71,5 +71,8 @@ public class Messages implements Listener {
         cfg.addDefault("Prefix", "&8&l[&3ShopHistory&8&l] ");
         cfg.addDefault("ErrorPrefix", "&8&l[&3&l!&8&l] ");
         cfg.addDefault("TeleportMessage", "&aYou have been successfully teleported to your shop.");
+        cfg.addDefault("ShopLogger.Title", "&3&lShop Logger &7(&a%LOG_NUMS%&7)");
+        cfg.addDefault("ShopLogger.Log", "&b&l| &aBuyer: &7%BUYER%, &aItem: &7%ITEM%, &aAmount: &7%AMOUNT%, &aMoney Spent: &7$%MONEY_SPENT%");
+        cfg.addDefault("ShopLogger.NoShopsLogged", "&7There are no logs saved for this shop.");
     }
 }

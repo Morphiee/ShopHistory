@@ -30,6 +30,36 @@ public class ShopsFilterManager {
         return ShopFilters;
     }
 
+    public String getTag(String string, UUID uuid) {
+        switch (string) {
+            case "All":
+                if (getPlayerTag(uuid).equals(string)) {
+                    return "&a" + getPlayerTag(uuid);
+                } else {
+                    return "&7All";
+                }
+            case "Buying":
+                if (getPlayerTag(uuid).equals(string)) {
+                    return "&a" + getPlayerTag(uuid);
+                } else {
+                    return "&7Buying";
+                }
+            case "Selling":
+                if (getPlayerTag(uuid).equals(string)) {
+                    return "&a" + getPlayerTag(uuid);
+                } else {
+                    return "&7Selling";
+                }
+            case "Out Of Stock":
+                if (getPlayerTag(uuid).equals(string)) {
+                    return "&a" + getPlayerTag(uuid);
+                } else {
+                    return "&7Out Of Stock";
+                }
+        }
+        return null;
+    }
+
     public String getPrevTag(UUID uuid) {
         int listSize = ShopFilters.size();
         if (new PlayerDataManager(plugin).getString(uuid, "CurrentFilter").equalsIgnoreCase(DefaultFilter)) {

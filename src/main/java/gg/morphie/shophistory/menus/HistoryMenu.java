@@ -70,10 +70,16 @@ public class HistoryMenu implements Listener {
                     return true;
                 }
             },
-            AddColor.addColor("&3&lMenu Filter &8(&a" + new ShopsFilterManager(plugin).getPlayerTag(p.getUniqueId()) + "&8)"),
+            AddColor.addColor("&3&lMenu Filter &7(&a" + new ShopsFilterManager(plugin).getPlayerTag(p.getUniqueId()) + "&7)"),
             " ",
-            AddColor.addColor("&7Current Filter Tag&8:"),
-            AddColor.addColor("&7" + new ShopsFilterManager(plugin).getPrevTag(p.getUniqueId()) + " &8-&a " + new ShopsFilterManager(plugin).getPlayerTag(p.getUniqueId()) + " &8-&7 " +  new ShopsFilterManager(plugin).getNextTag(p.getUniqueId())))));
+            AddColor.addColor("&3&lCurrent Filter Tag:"),
+            AddColor.addColor("&b&l| " + new ShopsFilterManager(plugin).getTag("All", uuid)),
+            AddColor.addColor("&b&l| " + new ShopsFilterManager(plugin).getTag("Buying", uuid)),
+            AddColor.addColor("&b&l| " + new ShopsFilterManager(plugin).getTag("Selling", uuid)),
+            AddColor.addColor("&b&l| " + new ShopsFilterManager(plugin).getTag("Out Of Stock", uuid)),
+            " ",
+            AddColor.addColor("&b➥ Click to change the current menu filter")
+            )));
 
         for (int i = 0; i < list.size(); i++) {
             String playerCurrentFilter = new PlayerDataManager(plugin).getString(uuid, "CurrentFilter");
@@ -93,8 +99,7 @@ public class HistoryMenu implements Listener {
                 if (new GetQuickShop().getItem(uuid, i).getItemMeta().hasDisplayName()) {
                     itemname = new GetQuickShop().getItem(uuid, i).getItemMeta().getDisplayName();
                 } else {
-                    String nameToChange = new GetQuickShop().getItem(uuid, i).getType().name()
-                            .replace("_", " ").toLowerCase();
+                    String nameToChange = new GetQuickShop().getItem(uuid, i).getType().name();
 
                     itemname = new AddColor().fixCase(nameToChange);
                 }
@@ -110,9 +115,20 @@ public class HistoryMenu implements Listener {
                 group.addElement(new DynamicGuiElement('g', (viewer) -> new StaticGuiElement('g', new ItemStackUtils().createItem(finalMaterial.getType().name(), 1, modelData, null, null, false),
                     click -> {
                         if (click.getType().isLeftClick()) {
-                            List<String> shopLogs = new PlayerDataManager(plugin).getStringList(uuid, new GetQuickShop().getShop(uuid, finalI3));
-                            p.sendMessage(AddColor.addColor("&8- &7" + shopLogs.get(0) + "&7, " + shopLogs.get(1) + "&7, " + shopLogs.get(2) + "&7, " + shopLogs.get(3)));
-                            return true; // returning true will cancel the click event and stop taking the item
+                            List<String> shopLogs = new PlayerDataManager(plugin).getStringList(uuid, "ShopLogger." + new GetQuickShop().getShop(uuid, finalI3));
+                            if (shopLogs.size() > 0) {
+                                p.sendMessage(AddColor.addColor(plugin.getMessage("ShopLogger.Title").replace("%LOG_NUMS%", String.valueOf(shopLogs.size()))));
+                                p.sendMessage(" ");
+                                for (String shopLog : shopLogs) {
+                                    p.sendMessage(AddColor.addColor(shopLog));
+                                }
+                                gui.close();
+                                return true;
+                            } else {
+                                gui.close();
+                                p.sendMessage(AddColor.addColor(plugin.getMessage("ErrorPrefix") + plugin.getMessage("ShopLogger.NoShopsLogged")));
+                                return true; // returning true will cancel the click event and stop taking the item
+                            }
                         } else if (click.getType().isRightClick()) {
                             gui.close();
                             Location loc = new GetQuickShop().getLocation(uuid, finalI3);
@@ -122,13 +138,15 @@ public class HistoryMenu implements Listener {
                         }
                         return true; // returning false will not cancel the initial click event to the gui
                     },
-                    AddColor.addColor("&3&l" + itemname + " &8| &a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, finalI3))),
+                    AddColor.addColor("&3&l" + itemname + " &7(&a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, finalI3)) + "&7)"),
                     " ",
-                    AddColor.addColor("&7Price&8: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, finalI3))),
-                    AddColor.addColor("&7Remaining Stock&8: &a" + new GetQuickShop().getStock(uuid, finalI3) + "&7/&c" + new GetQuickShop().getSpace(uuid, finalI3)),
+                    AddColor.addColor("&3&lInformation:"),
+                    AddColor.addColor("&b&l| &7Price: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, finalI3))),
+                    AddColor.addColor("&b&l| &7Remaining Stock: &a" + new GetQuickShop().getStock(uuid, finalI3) + "&7/&a" + new GetQuickShop().getSpace(uuid, finalI3)),
                     " ",
-                    AddColor.addColor("&7Right&8-&7Click to teleport to this shop."),
-                    AddColor.addColor("&7Left&8-&7Click to view this shops logs")
+                    AddColor.addColor("&b➦ Left-Click to view this shops logs"),
+                    AddColor.addColor("&b➥ Right-Click to teleport to this shop")
+
                 )));
             } else if (playerCurrentFilter.equals("Buying")) {
                 if (new GetQuickShop().getQuickShopAPI().getShopManager().getPlayerAllShops(p.getUniqueId()).get(i).getShopType().toString().equalsIgnoreCase("buying")) {
@@ -145,8 +163,7 @@ public class HistoryMenu implements Listener {
                     if (new GetQuickShop().getItem(uuid, i).getItemMeta().hasDisplayName()) {
                         itemname = new GetQuickShop().getItem(uuid, i).getItemMeta().getDisplayName();
                     } else {
-                        String nameToChange = new GetQuickShop().getItem(uuid, i).getType().name()
-                                .replace("_", " ").toLowerCase();
+                        String nameToChange = new GetQuickShop().getItem(uuid, i).getType().name();
 
                         itemname = new AddColor().fixCase(nameToChange);
                     }
@@ -162,9 +179,20 @@ public class HistoryMenu implements Listener {
                     group.addElement(new DynamicGuiElement('g', (viewer) -> new StaticGuiElement('g', new ItemStackUtils().createItem(finalMaterial.getType().name(), 1, modelData, null, null, false),
                         click -> {
                             if (click.getType().isLeftClick()) {
-                                List<String> shopLogs = new PlayerDataManager(plugin).getStringList(uuid, new GetQuickShop().getShop(uuid, finalI1));
-                                p.sendMessage(AddColor.addColor("&8- &7" + shopLogs.get(0) + "&7, " + shopLogs.get(1) + "&7, " + shopLogs.get(2) + "&7, " + shopLogs.get(3)));
-                                return true; // returning true will cancel the click event and stop taking the item
+                                List<String> shopLogs = new PlayerDataManager(plugin).getStringList(uuid, "ShopLogger." + new GetQuickShop().getShop(uuid, finalI1));
+                                if (shopLogs.size() > 0) {
+                                    p.sendMessage(AddColor.addColor(plugin.getMessage("ShopLogger.Title").replace("%LOG_NUMS%", String.valueOf(shopLogs.size()))));
+                                    p.sendMessage(" ");
+                                    for (String shopLog : shopLogs) {
+                                        p.sendMessage(AddColor.addColor(shopLog));
+                                    }
+                                    gui.close();
+                                    return true;
+                                } else {
+                                    gui.close();
+                                    p.sendMessage(AddColor.addColor(plugin.getMessage("ErrorPrefix") + plugin.getMessage("ShopLogger.NoShopsLogged")));
+                                    return true; // returning true will cancel the click event and stop taking the item
+                                }
                             } else if (click.getType().isRightClick()) {
                                 gui.close();
                                 Location loc = new GetQuickShop().getLocation(uuid, finalI1);
@@ -174,13 +202,14 @@ public class HistoryMenu implements Listener {
                             }
                             return true; // returning false will not cancel the initial click event to the gui
                         },
-                        AddColor.addColor("&3&l" + itemname + " &8| &a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, finalI1))),
+                        AddColor.addColor("&3&l" + itemname + " &7(&a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, finalI1)) + "&7)"),
                         " ",
-                        AddColor.addColor("&7Price&8: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, finalI1))),
-                        AddColor.addColor("&7Remaining Stock&8: &a" + new GetQuickShop().getStock(uuid, finalI1) + "&7/&c" + new GetQuickShop().getSpace(uuid, finalI1)),
+                        AddColor.addColor("&3&lInformation:"),
+                        AddColor.addColor("&b&l| &7Price: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, finalI1))),
+                        AddColor.addColor("&b&l| &7Remaining Stock: &a" + new GetQuickShop().getStock(uuid, finalI1) + "&7/&a" + new GetQuickShop().getSpace(uuid, finalI1)),
                         " ",
-                        AddColor.addColor("&7Right&8-&7Click to teleport to this shop."),
-                        AddColor.addColor("&7Left&8-&7Click to view this shops logs")
+                        AddColor.addColor("&b➦ Left-Click to view this shops logs"),
+                        AddColor.addColor("&b➥ Right-Click to teleport to this shop")
                     )));
                 }
             } else if (playerCurrentFilter.equals("Selling")) {
@@ -198,8 +227,7 @@ public class HistoryMenu implements Listener {
                     if (new GetQuickShop().getItem(uuid, i).getItemMeta().hasDisplayName()) {
                         itemname = new GetQuickShop().getItem(uuid, i).getItemMeta().getDisplayName();
                     } else {
-                        String nameToChange = new GetQuickShop().getItem(uuid, i).getType().name()
-                                .replace("_", " ").toLowerCase();
+                        String nameToChange = new GetQuickShop().getItem(uuid, i).getType().name();
 
                         itemname = new AddColor().fixCase(nameToChange);
                     }
@@ -215,9 +243,20 @@ public class HistoryMenu implements Listener {
                     group.addElement(new DynamicGuiElement('g', (viewer) -> new StaticGuiElement('g', new ItemStackUtils().createItem(finalMaterial.getType().name(), 1, modelData, null, null, false),
                         click -> {
                             if (click.getType().isLeftClick()) {
-                                List<String> shopLogs = new PlayerDataManager(plugin).getStringList(uuid, new GetQuickShop().getShop(uuid, finalI2));
-                                p.sendMessage(AddColor.addColor("&8- &7" + shopLogs.get(0) + "&7, " + shopLogs.get(1) + "&7, " + shopLogs.get(2) + "&7, " + shopLogs.get(3)));
-                                return true; // returning true will cancel the click event and stop taking the item
+                                List<String> shopLogs = new PlayerDataManager(plugin).getStringList(uuid, "ShopLogger." + new GetQuickShop().getShop(uuid, finalI2));
+                                if (shopLogs.size() > 0) {
+                                    p.sendMessage(AddColor.addColor(plugin.getMessage("ShopLogger.Title").replace("%LOG_NUMS%", String.valueOf(shopLogs.size()))));
+                                    p.sendMessage(" ");
+                                    for (String shopLog : shopLogs) {
+                                        p.sendMessage(AddColor.addColor(shopLog));
+                                    }
+                                    gui.close();
+                                    return true;
+                                } else {
+                                    gui.close();
+                                    p.sendMessage(AddColor.addColor(plugin.getMessage("ErrorPrefix") + plugin.getMessage("ShopLogger.NoShopsLogged")));
+                                    return true; // returning true will cancel the click event and stop taking the item
+                                }
                             } else if (click.getType().isRightClick()) {
                                 gui.close();
                                 Location loc = new GetQuickShop().getLocation(uuid, finalI2);
@@ -227,13 +266,14 @@ public class HistoryMenu implements Listener {
                             }
                             return true; // returning false will not cancel the initial click event to the gui
                         },
-                        AddColor.addColor("&3&l" + itemname + " &8| &a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, finalI2))),
+                        AddColor.addColor("&3&l" + itemname + " &7(&a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, finalI2)) + "&7)"),
                         " ",
-                        AddColor.addColor("&7Price&8: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, finalI2))),
-                        AddColor.addColor("&7Remaining Stock&8: &a" + new GetQuickShop().getStock(uuid, finalI2) + "&7/&c" + new GetQuickShop().getSpace(uuid, finalI2)),
+                        AddColor.addColor("&3&lInformation:"),
+                        AddColor.addColor("&b&l| &7Price: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, finalI2))),
+                        AddColor.addColor("&b&l| &7Remaining Stock: &a" + new GetQuickShop().getStock(uuid, finalI2) + "&7/&a" + new GetQuickShop().getSpace(uuid, finalI2)),
                         " ",
-                        AddColor.addColor("&7Right&8-&7Click to teleport to this shop."),
-                        AddColor.addColor("&7Left&8-&7Click to view this shops logs")
+                        AddColor.addColor("&b➦ Left-Click to view this shops logs"),
+                        AddColor.addColor("&b➥ Right-Click to teleport to this shop")
                     )));
                 }
             } else if (playerCurrentFilter.equals("Out Of Stock")) {
@@ -251,8 +291,7 @@ public class HistoryMenu implements Listener {
                     if (new GetQuickShop().getItem(uuid, i).getItemMeta().hasDisplayName()) {
                         itemname = new GetQuickShop().getItem(uuid, i).getItemMeta().getDisplayName();
                     } else {
-                        String nameToChange = new GetQuickShop().getItem(uuid, i).getType().name()
-                                .replace("_", " ").toLowerCase();
+                        String nameToChange = new GetQuickShop().getItem(uuid, i).getType().name();
 
                         itemname = new AddColor().fixCase(nameToChange);
                     }
@@ -262,9 +301,20 @@ public class HistoryMenu implements Listener {
                     group.addElement(new DynamicGuiElement('g', (viewer) -> new StaticGuiElement('g', new ItemStackUtils().createItem(finalMaterial.getType().name(), 1, finalMaterial.getItemMeta().getCustomModelData(), null, null, false),
                             click -> {
                                 if (click.getType().isLeftClick()) {
-                                    List<String> shopLogs = new PlayerDataManager(plugin).getStringList(uuid, new GetQuickShop().getShop(uuid, finalI2));
-                                    p.sendMessage(AddColor.addColor("&8- &7" + shopLogs.get(0) + "&7, " + shopLogs.get(1) + "&7, " + shopLogs.get(2) + "&7, " + shopLogs.get(3)));
-                                    return true; // returning true will cancel the click event and stop taking the item
+                                    List<String> shopLogs = new PlayerDataManager(plugin).getStringList(uuid, "ShopLogger." + new GetQuickShop().getShop(uuid, finalI2));
+                                    if (shopLogs.size() > 0) {
+                                        p.sendMessage(AddColor.addColor(plugin.getMessage("ShopLogger.Title").replace("%LOG_NUMS%", String.valueOf(shopLogs.size()))));
+                                        p.sendMessage(" ");
+                                        for (String shopLog : shopLogs) {
+                                            p.sendMessage(AddColor.addColor(shopLog));
+                                        }
+                                        gui.close();
+                                        return true;
+                                    } else {
+                                        gui.close();
+                                        p.sendMessage(AddColor.addColor(plugin.getMessage("ErrorPrefix") + plugin.getMessage("ShopLogger.NoShopsLogged")));
+                                        return true; // returning true will cancel the click event and stop taking the item
+                                    }
                                 } else if (click.getType().isRightClick()) {
                                     gui.close();
                                     Location loc = new GetQuickShop().getLocation(uuid, finalI2);
@@ -274,13 +324,14 @@ public class HistoryMenu implements Listener {
                                 }
                                 return true; // returning false will not cancel the initial click event to the gui
                             },
-                            AddColor.addColor("&3&l" + itemname + " &8| &a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, finalI2))),
+                            AddColor.addColor("&3&l" + itemname + " &7(&a" + new AddColor().fixCase(new GetQuickShop().getType(uuid, finalI2)) + "&7)"),
                             " ",
-                            AddColor.addColor("&7Price&8: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, finalI2))),
-                            AddColor.addColor("&7Remaining Stock&8: &a" + new GetQuickShop().getStock(uuid, finalI2) + "&7/&c" + new GetQuickShop().getSpace(uuid, finalI2)),
+                            AddColor.addColor("&3&lInformation:"),
+                            AddColor.addColor("&b&l| &7Price: &a" + new AddColor().fixCase(new GetQuickShop().getPrice(uuid, finalI2))),
+                            AddColor.addColor("&b&l| &7Remaining Stock: &a" + new GetQuickShop().getStock(uuid, finalI2) + "&7/&a" + new GetQuickShop().getSpace(uuid, finalI2)),
                             " ",
-                            AddColor.addColor("&7Right&8-&7Click to teleport to this shop."),
-                            AddColor.addColor("&7Left&8-&7Click to view this shops logs")
+                            AddColor.addColor("&b➦ Left-Click to view this shops logs"),
+                            AddColor.addColor("&b➥ Right-Click to teleport to this shop")
                     )));
                 }
             }
