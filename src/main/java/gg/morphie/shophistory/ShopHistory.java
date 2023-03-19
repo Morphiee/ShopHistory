@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.List;
 
 public class ShopHistory extends JavaPlugin implements Listener {
     public Messages messagescfg;
@@ -69,5 +70,9 @@ public class ShopHistory extends JavaPlugin implements Listener {
         String gotString = this.messagescfg.messagesCFG.getString(string);
         if (gotString != null) return gotString;
         return "Null message";
+    }
+
+    public List<String> getMessageList(String string) {
+        return this.messagescfg.messagesCFG.getStringList(string);
     }
 }

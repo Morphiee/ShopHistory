@@ -27,6 +27,7 @@ public class CommandManager {
                 .prefix("reloadsh")
                 .permission("quickshop.reloadsh")
                 .executor(new SubCommand_ReloadSH(plugin))
+                .description("Reloads the Shop History Quickshop Remake addon.")
                 .build();
 
         new GetQuickShop().getQuickShopAPI().getCommandManager().registerCmd(this.rootContainer);
